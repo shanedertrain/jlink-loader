@@ -10,5 +10,7 @@
 # Allow .bat files
 !*.bat
 
+!README.md
+
 # Allow the .gitignore file itself
 !.gitignore
