@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
-import subprocess
 from pathlib import Path
+import pylink
 
 class JLinkLoaderApp:
     def __init__(self, root: tk.Tk):
@@ -35,8 +35,8 @@ class JLinkLoaderApp:
         try:
             self.run_jlink(firmware_path)
             messagebox.showinfo("Success", "Firmware loaded successfully.")
-        except subprocess.CalledProcessError as e:
-            messagebox.showerror("Error", f"Failed to load firmware: {e.stderr}")
+        except pylink.errors.JLinkException as e:
+            messagebox.showerror("Error", f"Failed to load firmware: {str(e)}")
         except Exception as e:
             messagebox.showerror("Error", f"An unexpected error occurred: {str(e)}")
 
@@ -44,22 +44,16 @@ class JLinkLoaderApp:
         device = "XMC4700-2048"
         speed = 4000
 
-        jlink_commands = f"""
-        device {device}
-        speed {speed}
-        if SWD
-        loadfile {firmware_path}
-        r
-        g
-        exit
-        """
+        jlink = pylink.JLink()
+        jlink.open()
+        jlink.connect(device, iface=pylink.enums.JLinkInterfaces.SWD, speed=speed)
 
-        with open("jlink_script.jlink", "w") as script_file:
-            script_file.write(jlink_commands)
-
-        result = subprocess.run(["JLinkExe", "-CommanderScript", "jlink_script.jlink"], capture_output=True, text=True, check=True)
-        if result.returncode != 0:
-            raise subprocess.CalledProcessError(result.returncode, result.args, output=result.stdout, stderr=result.stderr)
+        try:
+            jlink.flash_file(str(firmware_path), 0x00000000)
+            jlink.reset()
+            jlink.go()
+        finally:
+            jlink.close()
 
 if __name__ == "__main__":
     root = tk.Tk()
