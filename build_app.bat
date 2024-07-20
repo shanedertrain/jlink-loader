@@ -1,0 +1,1 @@
+pyinstaller --name subprocess_jlink_loader --onefile subprocess_jlink_loader.py

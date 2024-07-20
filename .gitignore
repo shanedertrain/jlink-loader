@@ -1,1 +1,14 @@
-*.jlink
+# Ignore everything
+*
+
+# Do not ignore directories, so we can recurse into them
+!*/
+
+# Allow .py files
+!*.py
+
+# Allow .bat files
+!*.bat
+
+# Allow the .gitignore file itself
+!.gitignore

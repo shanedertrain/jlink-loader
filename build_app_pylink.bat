@@ -1,0 +1,1 @@
+pyinstaller --name pylink_jlink_loader --onefile pylink_jlink_loader.py
