@@ -46,7 +46,7 @@ class JLinkLoaderApp:
 
         jlink = pylink.JLink()
         jlink.open()
-        jlink.connect(device, iface=pylink.enums.JLinkInterfaces.SWD, speed=speed)
+        jlink.connect(device, speed=speed, verbose=True)
 
         try:
             jlink.flash_file(str(firmware_path), 0x00000000)
